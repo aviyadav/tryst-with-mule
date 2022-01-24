@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-employee-by-idFlow" doc:id="40bdcecc-9755-458d-8fac-c72e50f4106e" >
+		<http:listener doc:name="Get Employee Listener" doc:id="9cd88ff1-897b-46cb-b9b5-613d7567ef41" config-ref="HTTP_Listener_config" path="get-employee" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="32a3afcc-3037-4022-9325-7599479db956" message="Started get-employee-by-id flow"/>
+		<db:select doc:name="Get Employee By ID" doc:id="63683bc0-1345-48a0-af78-35eb6889845d" config-ref="FODS_ORCL_Database_Config">
+			<db:sql ><![CDATA[SELECT EMP_ID, EMP_NAME, EMP_STATUS FROM ST1_ENT1_FORM_ODS.EMP WHERE EMP_ID = :empID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	empID: attributes.queryParams.employeeID
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Set Response" doc:id="07da7e12-59db-4285-8cb3-059826732c17" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	employeeID: payload[0].EMP_ID,
+	employeeName: payload[0].EMP_NAME,
+	employeeStatus: payload[0].EMP_STATUS
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="0bec1bf0-b90d-4035-a431-b783ec3e8cea" message="end get-employee-by-id flow"/>
+	</flow>
+</mule>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config_sample" doc:name="HTTP Listener config" doc:id="d2236451-7903-43e9-8c06-cd4c43fa339e" >
+		<http:listener-connection host="0.0.0.0" port="8090" />
+	</http:listener-config>
+	<flow name="sampleFlow" doc:id="7f25d1f8-a7df-420b-804e-4981466a23ca" >
+		<http:listener doc:name="Listener" doc:id="68659a29-735a-491b-a551-e048f13d1de3" config-ref="HTTP_Listener_config_sample" path="sample" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6d69efab-96ad-41d7-a070-022928952375" message="FLOW START LOG"/>
+		<set-variable value="FIRST" doc:name="Set Variable" doc:id="3b44e450-8023-463d-8f4d-cccf868f6e7e" variableName="a"/>
+		<set-payload value="main flow - payload" doc:name="Set Payload" doc:id="3ed3e1e7-4d96-4154-a5ad-b2e479a2e85e" />
+		<async doc:name="Async" doc:id="32e8b14e-11c9-4412-bdac-1b3ade54ebf9" >
+			<flow-ref doc:name="Flow Reference" doc:id="1a5f3a53-3677-4881-a199-be97562f242f" name="sampleSub_Flow" />
+		</async>
+		<flow-ref doc:name="Flow Reference" doc:id="a05addcb-9423-4368-a192-294fb2b96914" name="sampleFlowPrivate"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6d9395db-a5ea-48f5-9c5b-dc748f6938b0" message="FLOW END LOG - #[payload]"/>
+	</flow>
+	<sub-flow name="sampleSub_Flow" doc:id="da75471f-fb4d-404a-90b1-1cd41ebd200a" >
+		<logger level="INFO" doc:name="Logger" doc:id="e1491a29-2e2f-473b-b6cf-61111f006361" message="SUBFLOW START LOG - #[payload] , #[vars.a]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="93bf41df-82a5-4482-bed5-387abb41dd87" message="SUBFLOW END LOG"/>
+		<set-payload value="subflow payload" doc:name="Set Payload" doc:id="b0954efe-2d94-417c-b49a-e780fd7a4d63" />
+	</sub-flow>
+	<flow name="sampleFlowPrivate" doc:id="abdaa22e-2ecf-4ff8-a4a3-b310a506cde2" >
+		<logger level="INFO" doc:name="Logger" doc:id="0eb90bbc-384f-4ba9-9a9f-cc8ea0080841" message="PRIVATE FLOW LOG"/>
+	</flow>
+</mule>

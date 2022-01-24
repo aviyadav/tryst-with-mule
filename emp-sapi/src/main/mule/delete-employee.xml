@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="delete-employeeFlow" doc:id="0351662a-625e-460f-b200-deb7812123bd" >
+		<http:listener doc:name="Listener" doc:id="59c004d2-60a0-45e4-b178-4ceec594eccd" config-ref="HTTP_Listener_config" path="delete-employee/{empID}/{empName}" allowedMethods="DELETE"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="38032b8b-6a0a-422d-82ca-a897e35493d8" message="Started delete-employee flow"/>
+		<db:delete doc:name="Delete Employee" doc:id="f6f28443-b85b-4b4e-9385-f5ac3e082ef7" config-ref="FODS_ORCL_Database_Config">
+			<db:sql ><![CDATA[DELETE FROM ST1_ENT1_FORM_ODS.EMP WHERE EMP_ID= :empID AND EMP_NAME = :empName]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	empID: attributes.uriParams.empID,
+	empName: attributes.uriParams.empName
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="cefb22a2-47fe-4280-bf52-af8040ad1a36" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: 200,
+	message: "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="336857c6-be84-483a-9eeb-715ee424ffc1" message="Completed delete-employee flow"/>
+	</flow>
+</mule>
