@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="OUTPUT-EXCEL-MD" format="excel">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type OUTPUT_EXCEL_MD = {|
+  employeedata?: Array<{|    id: Number,     name: String,     status: String  |}>
+|}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#7a72b8af-57d7-4a4c-814a-93ecae399d31">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="OUTPUT-EXCEL-MD"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
